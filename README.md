@@ -1,1 +1,3 @@
 # BaiduImage_Service
+
+使用requests库和flask做的一个服务，主要功能为百度图片的批量下载

@@ -92,14 +92,14 @@ def download_img(message):
         count = url_list.index(url)
         if count == number - 1:
             info = '下载完成!'
-            print(f'{info}  {count}')
+            # print(f'{info}  {count}')
             keyword1 = f'{keyword}_{url_filename}/{keyword}.zip'
             emit('server_response', {'data': info, 'keyword': keyword1}, namespace='/test')
             socketio.sleep(0.001)
         else:
             m = '{:.0%}'.format(count/number)
             info = f'已下载 {m} ！'
-            print(info)
+            # print(info)
             # 发给客户端的事件 result.html
             emit('server_response', {'data': info}, namespace='/test')
             socketio.sleep(0.001)
@@ -200,7 +200,7 @@ def getapi(kw):
 def get_ajax():
     kw = request.args.get('kw')
     page = request.args.get('page')
-    print(f'page: {page}')
+    # print(f'page: {page}')
     size = request.args.get('size')
     baidu = BaiduImage()
     listNum, urls = baidu.get_url_from_page(kw, size, page)

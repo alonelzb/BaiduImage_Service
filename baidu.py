@@ -58,7 +58,7 @@ class BaiduImage(object):
             url = f'https://image.baidu.com/search/acjson?tn=resultjson_com&ipn=rj&ie=utf-8&word={quote(keyword)}&pn={offset*30}&width={width}&height={height}'
             try:
                 listNum, urls = self.get_onepage_urls(url, keyword)
-                print(f'这是下载时执行的: {listNum}')
+                # print(f'这是下载时执行的: {listNum}')
                 if flag:
                     flag = False
                     pic_count = listNum
@@ -88,7 +88,7 @@ class BaiduImage(object):
             url = f'https://image.baidu.com/search/acjson?tn=resultjson_com&ipn=rj&ie=utf-8&word={quote(keyword)}&pn={offset*30}&width={width}&height={height}'
             try:
                 listNum, urls = self.get_onepage_urls(url, keyword)
-                print(f'这是人为提交的前2页: {listNum}')
+                # print(f'这是人为提交的前2页: {listNum}')
                 if flag:
                     flag = False
                     pic_count = listNum

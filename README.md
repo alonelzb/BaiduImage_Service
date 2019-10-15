@@ -1,13 +1,13 @@
 # BaiduImage_Service
 
-使用requests库和flask做的一个服务，主要功能为百度图片的批量下载
+使用requests库爬取百度图片，然后用flask做的一个服务，主要功能为百度图片的批量下载。
 
 ### 使用说明
 1. 克隆
 ```
 git clone https://github.com/alonelzb/BaiduImage_Service.git
 ```
-2. 进入脚本目录12
+2. 进入脚本目录
 ```
 cd BaiduImage_Service
 ```

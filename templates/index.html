@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="referrer" content="never">
+    <link href="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <!-- <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}"> -->
+    <link rel="stylesheet" href="../static/css/index.css">
+    <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdn.bootcss.com/popper.js/1.15.0/popper.min.js"></script>
+    <script src="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <title>Document</title>
+
+</head>
+
+<body>
+    <div id="login">
+        <div id="form">
+            <form action="{{ url_for('download') }}" method="POST" class="form-inline" onsubmit="return check_isnull()">
+                <div class="form-group input-group-lg">
+                    <select name="size" class="form-control" style="width: 160px" id="form_frame">
+                        <option>默认尺寸</option>
+                        <option>1920×1080</option>
+                    </select>
+                </div>
+                <div class="form-group input-group-lg">
+                    <input type="text" name="kw" id="kw" placeholder="输入关键词" value="" class="form-control"
+                        onfocus="if (value !='') {value = ''}">
+                </div>
+                <div class="form-group input-group-lg">
+                    <input class="btn btn-info btn-lg" type="submit" value="搜索">
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function check_isnull() {
+            let kw = document.getElementById('kw').value;
+            if (kw == '') {
+                alert('输入不能为空！');
+                return false;
+            }
+            return true;
+        };
+        if (localStorage.getItem('form_frame')) {
+            $("#form_frame option").eq(localStorage.getItem('form_frame')).prop('selected', true);
+        }
+        $("#form_frame").on('change', function () {
+            localStorage.setItem('form_frame', $('option:selected', this).index());
+        });
+    </script>
+
+</body>
+
+</html>

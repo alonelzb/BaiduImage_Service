@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="referrer" content="never">
+    <link href="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <!-- <script type="text/javascript" src="//code.jquery.com/jquery-1.4.2.min.js"></script> -->
+    <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+    <!-- <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.5/socket.io.min.js"></script> -->
+    <script src="https://cdn.bootcss.com/socket.io/2.2.0/socket.io.js"></script>
+
+
+    <title>Document</title>
+    <style>
+        .form1{
+            padding: 20px;
+        }
+        .head{
+            background-image: url('../static/images/4.jpeg');
+            background-size: cover;
+            height: 200px;
+            margin-bottom: 10px;
+        }
+
+    </style>
+</head>
+<body>
+    <div id="top"></div>
+    <a href="#top" style="position: fixed;right:10px;bottom:10px;writing-mode: vertical-rl;font-size: 20px">回到顶部</a>
+    <!-- <div class="container-fluid"> -->
+       <div class="head">
+           <div class="row">
+           <div class="col-md-4 offset-md-4 form1">
+                <form action="{{ url_for('download') }}" method="POST" class="form-inline" onsubmit="return checkmyform()">
+                    <div class="input-group input-group-lg">
+                        <select name="size" id="form_frame" class="form-control input-group-prepend">
+                            <option>默认尺寸</option>
+                            <option>1920×1080</option>
+                        </select>
+                        <input type="text" name="kw" id="kw" placeholder="输入关键词" value="{{ kw }}" class="form-control" onfocus="if (value != '') {value =''}">
+                        <button class="btn btn-info input-group-append" type="submit" id="check_kw">搜索</button>
+                    </div>
+                </form>
+           </div>
+           </div>
+       </div> 
+
+
+        <p id="total" class="text-primary" style="font-size: 20px;">图片总数: {{ listNum }}</p>
+        <form id="" action="#" style="text-align: center" method="POST" class="form-inline">
+            <div class="input-group input-group-lg">
+                <input type="hidden" id="download_kw" name="url_filename" value="{{ url_filename }}">
+                <input type="text" id="download_count" class="form-control" name="number" list="datalist" placeholder="输入下载数量" value="20" onfocus="if (value != '') {value=''}" onblur="if (value =='') {value ='50'}">
+                <datalist id="datalist">
+                    <option value="100"></option>
+                    <option value="200"></option>
+                    <option value="500"></option>
+                    <option value="全部"></option>
+                </datalist>
+                
+                <input type="button" class="btn btn-info" value="下载" id="btn1" onclick="jump()">
+                <input type="button" class="btn btn-info" value="快速下载" id="btn3" onclick="jump2()">
+            </div>
+        </form>
+
+        <!-- 隐藏下载表单 -->
+        <form id="emit" action="#" method="POST" class="form-inline" style="display: none;">
+            <div class="input-group input-group-lg">
+                <input type="text" name="hidden_filename" id="hidden_kw" value="">
+                <input type="text" id="hidden_count" class="form-control" name="number" value="">
+                <input type="submit" class="btn btn-info" value="下 载" id="btn2" onclick="">
+            </div>
+        </form>
+        <form id="emit2" action="#" method="POST" class="form-inline" style="display: none;">
+            <div class="input-group input-group-lg">
+                <input type="text" name="hidden_filename2" id="hidden_kw2" value="">
+                <input type="text" id="hidden_count2" class="form-control" name="number2" value="">
+                <input type="submit" class="btn btn-info" value="下 载" id="btn4" onclick="">
+            </div>
+        </form>
+        <p class="p" style="display: none; color:grey">快速下载有未知问题，请慎用！</p>
+        <h2 id="t"></h2>
+        <!-- 从服务器拿打包文件 -->
+        <h2><a id="package"></a></h2>
+
+
+        <div id="image">
+            {% for url in urls %}
+            <a href="{{ url }}" target="_blank"><img src="{{ url }}" alt="error" onerror="this.style.display='none'" class="rounded img-fluid img-thumbnail" width="450px" height="300px"></a>
+            {% endfor %}
+        </div>
+</div>
+
+
+    <!-- <div id="image"></div> -->
+    <div width="300px" style="text-align: center"><input type="submit" value="加载更多" id="btnajax" style="text-align: center"></div>
+    <p style="display: none" id="count">2</p>
+
+    <script>
+        $(function () {
+            $('#btnajax').click(function () {
+                let pre_count = Number($('#count').text());
+                pre_count++;
+                $('#count').text(pre_count);
+                let kw = $('#kw').val();
+                let size = $('#form_frame').val()
+                let data = { 'kw': kw , 'page': pre_count, 'size': size};
+                
+                $.ajax({
+                    url: '/get_ajax/',
+                    data: data,
+                    dataType: 'json',
+                    type: 'get',
+                    success: function (response) {
+                        let a = document.getElementById('image');
+                        for(let i=0;i<response[kw].length;i++){
+                            a.innerHTML += '<a href=' + response[kw][i] + ' target=_blank><img src=' + response[kw][i] + ' class="rounded img-fluid img-thumbnail" width="450px" height="300px" onerror="this.style.display='+"'none'"+'"></a>';
+                        }
+                    },
+                    error: function () {
+                        alert('error');
+                    }
+
+                });
+            });
+        });
+        function checkmyform(){
+            var isnull = document.getElementById('kw').value;
+            if(isnull == ''){
+                alert('输入不能为空！');
+                return false;
+            }
+            return true;
+        }
+        // // 下拉框刷新选中值
+        // function getData() {
+        //     let size = document.getElementById('form_frame').value;
+        //     localStorage.setItem('form_frame', size);
+        // }
+        if (localStorage.getItem('form_frame')) {
+            $("#form_frame option").eq(localStorage.getItem('form_frame')).prop('selected', true);
+        }
+        $("#form_frame").on('change', function() {
+            localStorage.setItem('form_frame', $('option:selected', this).index());
+        });
+
+       var btn1 = document.getElementById('btn1');
+       var btn2 = document.getElementById('btn2');
+       var btn3 = document.getElementById('btn3');
+       var btn4 = document.getElementById('btn4');
+       function jump2(){
+        //    获取用户输入下载数据
+            $('.p').show();
+           var kw = document.getElementById('download_kw').value;
+           var number = document.getElementById('download_count').value;
+           if (number == '全部'){
+            var total = document.getElementById('total').innerText;
+            var number = Number(total.slice(6));
+            
+           }
+           if(Number(number) > 400){
+               alert('最多下载400张！');
+               return;
+           }
+        //    给隐藏表单设置值
+           document.getElementById('hidden_count2').value = number;
+           document.getElementById('hidden_kw2').value = kw;
+           document.getElementById("btn4").click();
+       }
+
+       function jump(){
+        //    获取用户输入下载数据
+           var kw = document.getElementById('download_kw').value;
+           var number = document.getElementById('download_count').value;
+           if (number == '全部'){
+            var total = document.getElementById('total').innerText;
+            var number = Number(total.slice(6));
+            
+           }
+        //    给隐藏表单设置值
+           document.getElementById('hidden_count').value = number;
+           document.getElementById('hidden_kw').value = kw;
+           document.getElementById("btn2").click();
+       }
+
+
+        $(document).ready(function () {
+            namespace = '/test';
+            var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port + namespace, {'reconnect': true});
+
+            socket.on('connect', function(){
+                socket.emit('my event', {data: 'connected!'});
+            });
+            //点击发送时将text框的内容发送到后端
+            $('form#emit').submit(function (event) {
+                socket.emit('imessage', { kw: $('#hidden_kw').val(), count: $('#hidden_count').val() });
+                return false;
+            });
+            $('form#emit2').submit(function (event) {
+                socket.emit('imessage2', { kw: $('#hidden_kw2').val(), count: $('#hidden_count2').val() });
+                return false;
+            });
+            //接收后端广播的信息
+            socket.on('server_response1', function (msg) {
+                console.log(msg.data);
+                
+            });
+            socket.on('server_response', function (msg) {
+                if (msg.data == '下载完成!') {
+                    console.log(msg.keyword);
+                    
+                    $('.p').hide();
+                    // fname = msg.keyword
+                    fname = '/file/' + msg.keyword
+                    $('#t').text(msg.data);
+                    $('#package').attr('href', fname);
+
+                    let pkgname = $('#kw').val();
+                    $('#package').text(pkgname + '.zip');
+                    document.getElementById("package").click();
+                    console.log(fname);
+
+                } else {
+                    $('#t').text(msg.data);
+                }
+
+            });
+            
+            
+        });
+    </script>
+    
+    <script src="https://cdn.bootcss.com/popper.js/1.15.0/popper.min.js"></script>
+    <script src="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</body>
+</html>
